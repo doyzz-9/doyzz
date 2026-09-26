@@ -7,50 +7,22 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:sans-serif}
 body{background:#0d0d0d;color:#fff}
-.topbar{background:#151515;border-bottom:1px solid #222;padding:12px 16px;display:flex;justify-content:space-between;position:sticky;top:0}
+.topbar{background:#151515;border-bottom:1px solid #222;padding:12px 16px;display:flex;justify-content:space-between;position:sticky;top:0;z-index:10}
 .banner{margin:16px;border-radius:20px;background:linear-gradient(135deg,#ff3b5c,#7a1f3b);padding:22px}
 .container{max-width:720px;margin:0 auto;padding:0 16px 100px}
 .card{background:#181818;border:1px solid #2a2a2a;border-radius:16px;padding:16px;margin-bottom:14px}
 .search{display:flex;background:#0f0f0f;border:1px solid #333;border-radius:12px;padding:4px;margin-top:10px}
 .search input{flex:1;background:transparent;border:none;color:#fff;padding:12px;outline:none}
-.search button{background:#fff;color:#000;border:none;padding:10px 16px;border-radius:10px;font-weight:800}
+.search button{background:#fff;color:#000;border:none;padding:10px 16px;border-radius:10px;font-weight:800;cursor:pointer}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .product{background:#1e1e1e;border:1px solid #2a2a2a;border-radius:14px;padding:12px}
-.product h4{font-size:13px;margin-bottom:4px}
-.price{color:#00ff88;font-weight:800}
-.btn-buy{width:100%;background:#ff3b5c;border:none;color:#fff;padding:8px;border-radius:8px;margin-top:8px}
+.product h4{font-size:13px;margin-bottom:4px;height:32px}
+.price{color:#00ff88;font-weight:800;font-size:13px}
+.btn-buy{width:100%;background:#ff3b5c;border:none;color:#fff;padding:10px;border-radius:8px;margin-top:8px;font-weight:700;cursor:pointer}
+.status{padding:10px;border-radius:8px;font-size:12px;margin-top:10px;display:none}
 </style>
 </head>
 <body>
-<div class="topbar"><b>DOYZZ.TOKONET.CLOUD</b><span style="color:#0f0">● TOKONET STYLE</span></div>
+<div class="topbar"><b>DOYZZ.TOKONET.CLOUD</b><span style="color:#0f0;font-size:12px">● ONLINE</span></div>
 <div class="container">
-<div class="banner"><h2>Downloader & SMM Panel<br>Termurah & Permanen</h2><p>Anti limit 50 - Auto download + Jualan followers</p></div>
-<div class="card">
-<h3>📥 Downloader Permanen</h3>
-<div class="search"><input id="urlInput" placeholder="https://vt.tiktok.com/..."><button onclick="downloadTokonet()">DOWNLOAD</button></div>
-<div id="result" style="display:none;margin-top:14px"><video id="preview" controls style="width:100%;border-radius:12px;background:#000"></video><div id="downloads"></div></div>
-</div>
-<div class="card">
-<h3>🔥 Produk Terlaris</h3>
-<div class="grid">
-<div class="product"><h4>Followers TikTok 1K</h4><div class="price">Rp 12.000</div><button class="btn-buy">Beli</button></div>
-<div class="product"><h4>Views TikTok 10K</h4><div class="price">Rp 5.000</div><button class="btn-buy">Beli</button></div>
-<div class="product"><h4>Likes TikTok 1K</h4><div class="price">Rp 8.000</div><button class="btn-buy">Beli</button></div>
-<div class="product"><h4>Followers IG 1K</h4><div class="price">Rp 15.000</div><button class="btn-buy">Beli</button></div>
-</div>
-</div>
-</div>
-<script>
-async function downloadTokonet(){
- const url=document.getElementById('urlInput').value;
- let r=await fetch('https://www.tikwm.com/api/?url='+encodeURIComponent(url)+'&hd=1');
- let j=await r.json();
- if(j.code==0){
-  document.getElementById('result').style.display='block';
-  document.getElementById('preview').src=j.data.play;
-  document.getElementById('downloads').innerHTML=`<a href="${j.data.play}" target="_blank" style="display:block;background:#222;padding:12px;border-radius:10px;margin-top:8px;color:#fff;text-decoration:none">⬇️ Download No Watermark</a>`;
- }
-}
-</script>
-</body>
-</html>
+<div class="banner"><h2>Downloader & SMM Panel<br>Termurah
