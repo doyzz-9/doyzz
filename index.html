@@ -151,7 +151,7 @@
     border-radius: 50%;
     animation: spin 1s linear infinite;
   }
-  .loader-text { font-size: 13px; color: var(--primary); font-weight: 600; }
+  .loader-text { font-size: 13px; color: var(--primary); font-weight: 600; text-align: center;}
 
   @keyframes spin { to { transform: rotate(360deg); } }
   @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -257,34 +257,6 @@
   }
   .btn-share:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
 
-  .share-options {
-    display: none;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin-top: 12px;
-    animation: slideUp 0.3s ease;
-  }
-  .share-options.show { display: grid; }
-  .share-options a, .share-options button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    background: rgba(0,0,0,0.3);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    color: var(--text-main);
-    font-size: 12px;
-    font-weight: 600;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .share-options a:hover, .share-options button:hover {
-    background: rgba(139, 92, 246, 0.2);
-    border-color: var(--primary);
-  }
-
   .watermark { text-align: center; margin-top: 24px; font-size: 11px; color: rgba(255,255,255,0.1); letter-spacing: 2px; }
 
   @media (max-width: 480px) {
@@ -331,20 +303,15 @@
     </div>
     
     <div class="action-group">
-      <a id="dlBtn" class="btn-action btn-download" download target="_blank" rel="noopener">
+      <!-- Tombol download diubah jadi button, bukan a href -->
+      <button id="dlBtn" class="btn-action btn-download">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download HD
-      </a>
+        <span id="dlBtnText">Download HD</span>
+      </button>
       <button id="shareBtn" class="btn-action btn-share">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         Bagikan
       </button>
-    </div>
-
-    <div class="share-options" id="shareOptions">
-      <a id="shareWa" target="_blank" rel="noopener">WhatsApp</a>
-      <a id="shareTg" target="_blank" rel="noopener">Telegram</a>
-      <button id="copyLink">Salin Link</button>
     </div>
   </div>
 
@@ -354,6 +321,7 @@
 <script>
 const $ = id => document.getElementById(id);
 const api = "https://www.tikwm.com/api/?url=";
+let currentVideoUrl = ""; // Simpan URL video buat di-download
 
 $("pasteBtn").addEventListener("click", async () => {
   try {
@@ -381,7 +349,6 @@ $("fetchBtn").addEventListener("click", async () => {
   $("loadTxt").textContent = "Menghubungi server...";
   $("alertBox").classList.remove("show");
   $("result").classList.remove("show");
-  $("shareOptions").classList.remove("show");
   $("fetchBtn").disabled = true;
 
   try {
@@ -391,18 +358,16 @@ $("fetchBtn").addEventListener("click", async () => {
     const data = await res.json();
     if (data.code !== 0) throw new Error(data.msg || "Link tidak valid atau server sibuk.");
 
-    const videoUrl = data.data.play; 
+    currentVideoUrl = data.data.play; 
     const videoDesc = data.data.title || "Tanpa deskripsi.";
     const videoCover = data.data.cover;
 
-    if (!videoUrl) throw new Error("URL Video tidak ditemukan.");
+    if (!currentVideoUrl) throw new Error("URL Video tidak ditemukan.");
 
     $("desc").textContent = videoDesc;
-    $("dlBtn").href = videoUrl;
-    $("dlBtn").setAttribute("download", "helios_video.mp4");
     
     const player = $("player");
-    player.src = videoUrl; 
+    player.src = currentVideoUrl; 
 
     if(videoCover) {
       $("bgBlur").style.backgroundImage = `url('${videoCover}')`;
@@ -411,23 +376,26 @@ $("fetchBtn").addEventListener("click", async () => {
     $("loader").classList.remove("show");
     $("result").classList.add("show");
 
-    const shareText = encodeURIComponent("Cek video keren ini: " + videoDesc);
-    const shareUrl = encodeURIComponent(url);
-    $("shareWa").href = `https://wa.me/?text=${shareText}%20${shareUrl}`;
-    $("shareTg").href = `https://t.me/share/url?url=${shareUrl}&text=${shareText}`;
-    
-    $("copyLink").onclick = async () => {
-      try {
-        await navigator.clipboard.writeText(url);
-        $("loadTxt").textContent = "Link disalin!";
-        setTimeout(() => $("loadTxt").textContent = "", 2000);
-      } catch (e) {
-        showAlert("Gagal menyalin link.");
-      }
-    };
+    // LOGIKA SHARE KE SEMUA APK HP
+    $("shareBtn").onclick = async () => {
+      const shareData = {
+        title: 'Video TikTok HD',
+        text: 'Cek video keren ini: ' + videoDesc,
+        url: url 
+      };
 
-    $("shareBtn").onclick = () => {
-      $("shareOptions").classList.toggle("show");
+      try {
+        if (navigator.share) {
+          await navigator.share(shareData);
+        } else {
+          await navigator.clipboard.writeText(url);
+          showAlert("Link disalin ke clipboard. Silakan tempel di chat/status.");
+        }
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          showAlert("Gagal membagikan link.");
+        }
+      }
     };
 
   } catch (err) {
@@ -435,6 +403,70 @@ $("fetchBtn").addEventListener("click", async () => {
     showAlert(err.message || "Terjadi kesalahan sistem.");
   } finally {
     $("fetchBtn").disabled = false;
+  }
+});
+
+// LOGIKA DOWNLOAD BLOB (LANGSUNG MASUK FOLDER DOWNLOAD)
+$("dlBtn").addEventListener("click", async () => {
+  if (!currentVideoUrl) return;
+  
+  const btnText = $("dlBtnText");
+  const originalText = btnText.textContent;
+  
+  // Ubah tampilan tombol jadi loading
+  btnText.textContent = "Mengunduh... (0%)";
+  $("dlBtn").disabled = true;
+
+  try {
+    const response = await fetch(currentVideoUrl);
+    if (!response.ok) throw new Error("Gagal mengambil file video.");
+
+    // Baca total ukuran file untuk progress bar
+    const contentLength = response.headers.get('content-length');
+    const total = parseInt(contentLength, 10);
+    let loaded = 0;
+
+    const reader = response.body.getReader();
+    const chunks = [];
+
+    // Baca file per potongan (chunk)
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      loaded += value.length;
+      
+      if (total) {
+        const percent = Math.round((loaded / total) * 100);
+        btnText.textContent = `Mengunduh... (${percent}%)`;
+      }
+    }
+
+    // Gabungkan semua potongan jadi file utuh
+    const blob = new Blob(chunks, { type: 'video/mp4' });
+    const blobUrl = URL.createObjectURL(blob);
+
+    // Buat elemen <a> sementara untuk memicu download
+    const a = document.createElement("a");
+    a.href = blobUrl;
+    a.download = `DOYZZ_${Date.now()}.mp4`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    // Bersihkan memori
+    URL.revokeObjectURL(blobUrl);
+    btnText.textContent = "Berhasil!";
+
+    setTimeout(() => {
+      btnText.textContent = originalText;
+    }, 3000);
+
+  } catch (err) {
+    showAlert("Gagal download: " + err.message);
+    btnText.textContent = originalText;
+  } finally {
+    $("dlBtn").disabled = false;
   }
 });
 </script>
