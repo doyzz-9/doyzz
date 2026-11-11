@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HELIOS // Downloader</title>
+<title>𝐝𝐨𝐲𝐳 // 𝐝𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -185,20 +185,34 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
+    position: relative; /* Penting buat nampung background blur */
+  }
+
+  /* EFEK KACA BLUR DI BELAKANG VIDEO */
+  .bg-blur {
+    position: absolute;
+    inset: -20px;
+    background-size: cover;
+    background-position: center;
+    filter: blur(20px) brightness(0.6);
+    z-index: 0;
   }
   
-  /* PERBAIKAN: Video utuh, tapi background di belakangnya di-blur */
   video { 
     width: 100%; 
     height: 450px; 
     display: block; 
-    object-fit: contain; /* Video utuh tanpa kepotong */
-    background: transparent;
+    object-fit: contain; 
+    background: transparent; 
+    position: relative;
+    z-index: 1; /* Video di atas background blur */
   }
 
   .desc-box {
+    position: relative;
+    z-index: 1; /* Deskripsi di atas background blur */
     padding: 16px;
-    background: rgba(20, 20, 30, 0.9);
+    background: rgba(20, 20, 30, 0.85);
     border-top: 1px solid var(--border-color);
     font-size: 13px;
     line-height: 1.6;
@@ -312,7 +326,6 @@
 
   <div class="result-section" id="result">
     <div class="video-wrapper">
-      <!-- Tambahan div buat background blur -->
       <div class="bg-blur" id="bgBlur"></div>
       <video id="player" controls playsinline></video>
       <div class="desc-box" id="desc"></div>
@@ -381,6 +394,7 @@ $("fetchBtn").addEventListener("click", async () => {
 
     const videoUrl = data.data.play; 
     const videoDesc = data.data.title || "Tanpa deskripsi.";
+    const videoCover = data.data.cover; // Ambil gambar cover buat background blur
 
     if (!videoUrl) throw new Error("URL Video tidak ditemukan.");
 
@@ -390,6 +404,11 @@ $("fetchBtn").addEventListener("click", async () => {
     
     const player = $("player");
     player.src = videoUrl; 
+
+    // Set gambar untuk efek blur background
+    if(videoCover) {
+      $("bgBlur").style.backgroundImage = `url('${videoCover}')`;
+    }
     
     $("loader").classList.remove("show");
     $("result").classList.add("show");
