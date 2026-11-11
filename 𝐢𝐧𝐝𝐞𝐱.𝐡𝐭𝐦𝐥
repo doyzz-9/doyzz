@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>𝐝𝐨𝐲𝐳 // 𝐝𝐨𝐰𝐧𝐥𝐨𝐚𝐝𝐞𝐫</title>
+<title>DOYZZ // Downloader</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -185,10 +185,9 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
-    position: relative; /* Penting buat nampung background blur */
+    position: relative;
   }
 
-  /* EFEK KACA BLUR DI BELAKANG VIDEO */
   .bg-blur {
     position: absolute;
     inset: -20px;
@@ -205,12 +204,12 @@
     object-fit: contain; 
     background: transparent; 
     position: relative;
-    z-index: 1; /* Video di atas background blur */
+    z-index: 1; 
   }
 
   .desc-box {
     position: relative;
-    z-index: 1; /* Deskripsi di atas background blur */
+    z-index: 1; 
     padding: 16px;
     background: rgba(20, 20, 30, 0.85);
     border-top: 1px solid var(--border-color);
@@ -303,7 +302,7 @@
 
 <div class="card">
   <div class="header">
-    <h1>HELIOS // DL</h1>
+    <h1>DOYZZ // DL</h1>
     <p>Download video HD tanpa watermark</p>
   </div>
 
@@ -394,7 +393,7 @@ $("fetchBtn").addEventListener("click", async () => {
 
     const videoUrl = data.data.play; 
     const videoDesc = data.data.title || "Tanpa deskripsi.";
-    const videoCover = data.data.cover; // Ambil gambar cover buat background blur
+    const videoCover = data.data.cover;
 
     if (!videoUrl) throw new Error("URL Video tidak ditemukan.");
 
@@ -405,7 +404,6 @@ $("fetchBtn").addEventListener("click", async () => {
     const player = $("player");
     player.src = videoUrl; 
 
-    // Set gambar untuk efek blur background
     if(videoCover) {
       $("bgBlur").style.backgroundImage = `url('${videoCover}')`;
     }
