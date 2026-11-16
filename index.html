@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>JB Cash Flow</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root { 
+    --bg-dark: #09090b; 
+    --surface-dark: #18181b;
+    --theme-color: #007aff; 
+    --text-main: #fafafa;
+    --text-muted: #a1a1aa;
+    --ios-spring: cubic-bezier(0.25, 0.8, 0.25, 1); 
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'Plus Jakarta Sans', -apple-system, sans-serif; background: var(--bg-dark); color: var(--text-main); padding-bottom: 100px; overscroll-behavior-y: none; transition: background 0.6s var(--ios-spring); }
+  
+  .topbar { display: flex; align-items: center; gap: 14px; padding: 16px 20px; background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(24px); border-bottom: 1px solid rgba(255,255,255,0.05); position: sticky; top: 0; z-index: 50; }
+  .brand { font-weight: 800; font-size: 20px; background: linear-gradient(135deg, #fff, var(--theme-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; white-space: nowrap; letter-spacing: -0.5px; filter: drop-shadow(0 0 10px var(--theme-color)); transition: all 0.5s; }
+  .search-wrap { flex: 1; display: flex; align-items: center; background: rgba(255,255,255,0.08); border-radius: 12px; padding: 10px 14px; gap: 10px; border: 1px solid rgba(255,255,255,0.1); transition: all 0.3s var(--ios-spring); }
+  .search-wrap:focus-within { background: rgba(255,255,255,0.12); border-color: var(--theme-color); box-shadow: 0 0 15px rgba(0,122,255,0.2); }
+  .search-wrap input { border: none; background: transparent; outline: none; font-size: 14px; width: 100%; color: #fff; font-family: inherit; font-weight: 500; }
+  .search-wrap input::placeholder { color: var(--text-muted); }
+  .search-icon { font-size: 15px; color: var(--text-muted); }
+  
+  .scroll-area { padding: 20px 20px 0; }
+  .banner-card { border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+  .banner-img { display: block; width: 100%; opacity: 0.9; }
+  
+  .kategori-sec { margin-top: 24px; }
+  .kategori-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .kat-item { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 11px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: transform 0.2s var(--ios-spring); }
+  .kat-item:active { transform: scale(0.85); }
+  .kat-icon { width: 54px; height: 54px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--surface-dark); color: var(--theme-color); transition: all 0.3s var(--ios-spring); border: 1px solid rgba(255,255,255,0.05); }
+  .kat-item.active .kat-icon { background: var(--theme-color); color: #fff !important; transform: scale(1.1) translateY(-4px); box-shadow: 0 8px 20px var(--theme-color); border-color: transparent; }
+  .kat-item.active span { color: #fff; font-weight: 700; }
+  
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 16px; margin-top: 24px; }
+  .card { background: var(--surface-dark); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); display: flex; flex-direction: column; animation: cardFadeIn 0.5s var(--ios-spring) forwards; transition: transform 0.2s var(--ios-spring); position: relative; overflow: hidden; }
+  .card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+  @keyframes cardFadeIn { to { transform: translateY(0); opacity: 1; } }
+  .card:active { transform: scale(0.96) !important; }
+  .card-img-wrap { position: relative; width: 100%; aspect-ratio: 1/1; border-radius: 14px; overflow: hidden; margin-bottom: 12px; background: #000; }
+  .card-img { width: 100%; height: 100%; object-fit: cover; }
+  .promo-badge { position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #ef4444, #f59e0b); color: #fff; font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 8px; box-shadow: 0 4px 10px rgba(239,68,68,0.4); z-index: 2; }
+  .card .name { font-size: 14px; font-weight: 700; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3; }
+  .price-wrap { margin-top: auto; display: flex; flex-direction: column; }
+  .price-old { font-size: 11px; color: var(--text-muted); text-decoration: line-through; margin-bottom: 2px; }
+  .price { font-size: 16px; font-weight: 800; color: var(--theme-color); letter-spacing: -0.5px; }
+  
+  .wa-btn { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 14px; padding: 10px; background: #10b981; color: #fff; font-weight: 700; font-size: 13px; border-radius: 12px; text-decoration: none; transition: all 0.2s var(--ios-spring); box-shadow: 0 4px 15px rgba(16,185,129,0.3); }
+  .wa-btn:active { transform: scale(0.92); box-shadow: none; }
+  
+  .bottom-nav { position: fixed; bottom: 20px; left: 20px; right: 20px; display: flex; justify-content: space-around; background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(24px); border-radius: 24px; padding: 10px; box-shadow: 0 12px 40px rgba(0,0,0,0.6); z-index: 60; border: 1px solid rgba(255,255,255,0.1); }
+  .bn-item { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 700; color: var(--text-muted); text-decoration: none; padding: 8px 20px; border-radius: 16px; transition: all 0.3s; }
+  .bn-item i { font-size: 20px; }
+  .bn-item.active { color: var(--theme-color); background: rgba(0,122,255,0.1); }
+  
+  .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: flex-end; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+  .modal-overlay.show { opacity: 1; pointer-events: auto; }
+  .modal-content { background: var(--surface-dark); border: 1px solid rgba(255,255,255,0.1); width: 100%; border-radius: 32px 32px 0 0; padding: 16px 24px 48px; transform: translateY(100%); transition: transform 0.5s var(--ios-spring); max-height: 80vh; }
+  .modal-overlay.show .modal-content { transform: translateY(0); }
+  .modal-handle { width: 44px; height: 5px; background: rgba(255,255,255,0.2); border-radius: 10px; margin: 0 auto 20px; }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">ᴊʙ ᴄᴀꜱʜ ꜰʟᴏᴡ</div>
+  <div class="search-wrap">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" id="search-input" placeholder="ᴄᴀʀɪ ᴀᴋᴜɴ, ɪᴛᴇᴍ...">
+  </div>
+</header>
+
+<div class="scroll-area">
+  <div class="banner-card">
+    <img src="https://cdn.imagetourls.com/uploads/tyImg/FPWXGXn3.jpg" class="banner-img">
+  </div>
+
+  <section class="kategori-sec">
+    <div class="kategori-grid" id="category-list">
+      <div class="kat-item active" onclick="filterCategory('Semua', this)"><div class="kat-icon"><i class="fa-solid fa-layer-group"></i></div><span>ꜱᴇᴍᴜᴀ</span></div>
+      <div class="kat-item" onclick="filterCategory('Free Fire', this)"><div class="kat-icon"><i class="fa-solid fa-fire"></i></div><span>ꜰʀᴇᴇ ꜰɪʀᴇ</span></div>
+      <div class="kat-item" onclick="filterCategory('Mobile Legends', this)"><div class="kat-icon"><i class="fa-solid fa-shield-halved"></i></div><span>ᴍʟʙʙ</span></div>
+      <div class="kat-item" onclick="filterCategory('Flash Sale', this)"><div class="kat-icon"><i class="fa-solid fa-bolt"></i></div><span>ꜰʟᴀꜱʜ ꜱᴀʟᴇ</span></div>
+      <div class="kat-item" onclick="filterCategory('Pelajar', this)"><div class="kat-icon"><i class="fa-solid fa-graduation-cap"></i></div><span>ᴘᴇʟᴀᴊᴀʀ</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div id="product-grid" class="grid"></div>
+  </section>
+</div>
+
+<nav class="bottom-nav">
+  <a href="#" class="bn-item active" onclick="openModal('beranda')"><i class="fa-solid fa-house"></i><span>ʙᴇʀᴀɴᴅᴀ</span></a>
+  <a href="#" class="bn-item" onclick="openModal('bantuan')"><i class="fa-solid fa-circle-question"></i><span>ʙᴀɴᴛᴜᴀɴ</span></a>
+</nav>
+
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <h3 id="modal-title" style="text-align:center; margin-bottom: 20px; font-size: 20px; color: #fff;">ʙᴀɴᴛᴜᴀɴ</h3>
+    <div id="modal-body" style="font-size:15px; line-height:1.6; color: var(--text-muted); text-align: center;"></div>
+  </div>
+</div>
+
+<script>
+  // ===== HELPER: FONT AESTHETIC =====
+  function toAesthetic(str) {
+    if(!str) return "";
+    const map = { 'a':'ᴀ','b':'ʙ','c':'ᴄ','d':'ᴅ','e':'ᴇ','f':'ꜰ','g':'ɢ','h':'ʜ','i':'ɪ','j':'ᴊ','k':'ᴋ','l':'ʟ','m':'ᴍ','n':'ɴ','o':'ᴏ','p':'ᴘ','q':'ǫ','r':'ʀ','s':'ꜱ','t':'ᴛ','u':'ᴜ','v':'ᴠ','w':'ᴡ','x':'x','y':'ʏ','z':'ᴢ','A':'ᴀ','B':'ʙ','C':'ᴄ','D':'ᴅ','E':'ᴇ','F':'ꜰ','G':'ɢ','H':'ʜ','I':'ɪ','J':'ᴊ','K':'ᴋ','L':'ʟ','M':'ᴍ','N':'ɴ','O':'ᴏ','P':'ᴘ','Q':'ǫ','R':'ʀ','S':'ꜱ','T':'ᴛ','U':'ᴜ','V':'ᴠ','W':'ᴡ','X':'x','Y':'ʏ','Z':'ᴢ' };
+    return str.split('').map(char => map[char] || char).join('');
+  }
+
+  // ===== LOCAL STORAGE =====
+  const getDB = (key) => JSON.parse(localStorage.getItem('jb_' + key)) || [];
+  let products = getDB('products');
+  let bantuanText = localStorage.getItem('jb_bantuan') || "Hubungi admin JB Cash Flow di +62 883-8003-5722 untuk bantuan.";
+
+  let currentCategory = 'Semua';
+  const themeColors = { 'Semua': '#007aff', 'Free Fire': '#ef4444', 'Mobile Legends': '#8b5cf6', 'Flash Sale': '#f59e0b', 'Pelajar': '#007aff' };
+  const grid = document.getElementById('product-grid');
+  const searchInput = document.getElementById('search-input');
+
+  function formatRupiah(n) { return 'Rp ' + Number(n).toLocaleString('id-ID'); }
+
+  function renderProducts() {
+    let filtered = products;
+    if (currentCategory !== 'Semua') filtered = filtered.filter(p => p.kategori === currentCategory);
+    const q = searchInput.value.toLowerCase();
+    if (q) filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
+
+    if (!filtered.length) {
+      grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px 0; opacity: 0.4;"><i class="fa-solid fa-box-open" style="font-size: 56px; margin-bottom: 16px; color: var(--text-muted);"></i><p style="font-size: 15px; font-weight: 600; color: var(--text-muted);">ʙᴇʟᴜᴍ ᴀᴅᴀ ᴘʀᴏᴅᴜᴋ ᴅɪ ꜱɪɴɪ.</p></div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map((p, i) => {
+      let discountPct = "";
+      if (p.old_price && p.old_price > p.price) discountPct = Math.round(((p.old_price - p.price) / p.old_price) * 100) + "% OFF";
+      const waText = `Halo%20Admin%20JB%20Cash%20Flow,%20saya%20tertarik%20untuk%20membeli%20produk%20*${encodeURIComponent(p.name)}*.%20Apakah%20stoknya%20masih%20ada?`;
+      const aestheticName = toAesthetic(p.name);
+
+      return `
+      <div class="card" style="animation-delay: ${i * 0.05}s; opacity: 0; transform: translateY(20px);">
+        <div class="card-img-wrap">
+          ${discountPct ? `<div class="promo-badge">${discountPct}</div>` : ''}
+          <img src="${p.image || 'https://placehold.co/400x400/18181b/a1a1aa?text=No+Img'}" class="card-img" loading="lazy">
+        </div>
+        <div class="name">${aestheticName}</div>
+        <div class="price-wrap">
+          ${p.old_price ? `<span class="price-old">${formatRupiah(p.old_price)}</span>` : ''}
+          <div class="price">${formatRupiah(p.price)}</div>
+        </div>
+        <a class="wa-btn" href="https://wa.me/${p.wa}?text=${waText}" target="_blank">
+          <i class="fa-brands fa-whatsapp"></i> ʙᴇʟɪ ꜱᴇᴋᴀʀᴀɴɢ
+        </a>
+      </div>`;
+    }).join('');
+  }
+
+  function filterCategory(cat, el) {
+    currentCategory = cat;
+    const color = themeColors[cat];
+    document.documentElement.style.setProperty('--theme-color', color);
+    document.body.style.background = `radial-gradient(circle at top left, ${color}15, var(--bg-dark) 60%)`;
+    document.querySelectorAll('.kat-item').forEach(item => item.classList.remove('active'));
+    if(el) el.classList.add('active');
+    renderProducts();
+  }
+
+  searchInput.addEventListener('input', renderProducts);
+
+  const overlay = document.getElementById('modal-overlay');
+  function openModal(type) {
+    if (type === 'beranda') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      document.querySelectorAll('.bn-item')[0].classList.add('active');
+      document.querySelectorAll('.bn-item')[1].classList.remove('active');
+      return;
+    }
+    if (type === 'bantuan') {
+      document.querySelectorAll('.bn-item')[1].classList.add('active');
+      document.querySelectorAll('.bn-item')[0].classList.remove('active');
+      document.getElementById('modal-body').innerText = bantuanText;
+      overlay.classList.add('show');
+    }
+  }
+
+  function closeModal(e) {
+    if (e.target.id === 'modal-overlay') overlay.classList.remove('show');
+  }
+
+  renderProducts();
+</script>
+</body>
+</html>
